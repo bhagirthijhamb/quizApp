@@ -6,10 +6,14 @@ const answerButtonsElement = document.getElementById('answer-buttons');
 
 let shuffledQuestions, currentQuestionIndex;
 
-startButton.addEventListener('click', startGame)
+startButton.addEventListener('click', startGame);
+nextButton.addEventListener('click', () => {
+    currentQuestionIndex++;
+    setNextQuestion();
+})
 
 function startGame(){
-    console.log('Started');
+    // console.log('Started');
     startButton.classList.add('hide');
     shuffledQuestions = questions.sort(() => Math.random() - .5);
     currentQuestionIndex = 0;
@@ -37,14 +41,42 @@ function showQuestion(question) {
 }
 
 function resetState(){
+    clearStatusClass(document.body);
     nextButton.classList.add('hide');
     while(answerButtonsElement.firstChild){
         answerButtonsElement.removeChild(answerButtonsElement.firstChild);
     }
 }
 
-function selectAnswer(){
+// nextButton.classList.remove('hide');
 
+function selectAnswer(e){
+    const selectedButton = e.target;
+    const correct = selectedButton.dataset.correct;
+    setStatusClass(document.body, correct)
+    Array.from(answerButtonsElement.children).forEach(button => {
+        setStatusClass(button, button.dataset.correct);
+    })
+    if(shuffledQuestions.length > currentQuestionIndex + 1){
+        nextButton.classList.remove('hide');
+    } else {
+        startButton.innerText = 'Restart';
+        startButton.classList.remove('hide');
+    }
+}
+
+function setStatusClass(element, correct){
+    clearStatusClass(element);
+    if(correct){
+        element.classList.add('correct');
+    } else {
+        element.classList.add('wrong');
+    }
+}
+
+function clearStatusClass(element){
+    element.classList.remove('corect');
+    element.classList.remove('wrong');
 }
 
 const questions = [
@@ -54,5 +86,30 @@ const questions = [
             { text: '4', correct: true },
             { text: '22', correct: false }
         ]
-    }
+    },
+    {
+        question: 'What is 4 * 2 ? ',
+        answers: [
+            { text: '8', correct: true },
+            { text: '17', correct: false },
+            { text: '60', correct: false }
+        ]
+    },
+    {
+        question: 'What is 12 / 2 ? ',
+        answers: [
+            { text: '41', correct: false },
+            { text: '14', correct: false },
+            { text: '6', correct: true },
+            { text: '24', correct: false }
+        ]
+    },
+    {
+        question: 'What is 22 - 13 ? ',
+        answers: [
+            { text: '14', correct: false },
+            { text: '9', correct: true },
+            { text: '35', correct: false }
+        ]
+    },
 ]
